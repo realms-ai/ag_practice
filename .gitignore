@@ -1,5 +1,6 @@
 # Ignoring Node Modules
 /**/*/node_modules
+node_modules
 
 # Ignoring Log Files
 /**/*/*.log
