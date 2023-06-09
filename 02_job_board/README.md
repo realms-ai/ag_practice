@@ -27,3 +27,6 @@ It uses Apollo Server with Express, and GraphQL-Request and Apollo Client as Gra
 ```
     npm start
 ```
+
+### Migration from GraphQL Client to Apollo Client
+GraphQL Client is a light weight module but does not allow caching of data
