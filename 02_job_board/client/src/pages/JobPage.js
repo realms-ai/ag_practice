@@ -4,22 +4,35 @@ import { formatDate } from '../lib/formatters';
 // import { jobs } from '../lib/fake-data';
 import { getJobById } from '../lib/graphql/queries';
 import { useEffect, useState } from 'react';
+import { useJob } from '../lib/graphql/hooks';
 
 function JobPage() {
   const { jobId } = useParams();
-  const [job, setJob] = useState(null);
-  useEffect(() => {
-    const fetchJob = async () => {
-      const job = await getJobById(jobId);
-      setJob(job);
-    };
-    fetchJob();
-  }, [jobId])
-  console.log("[JobPage] job: ", job, " jobId: ", jobId)
-  if(!job) {
+
+  const {job, loading, error} = useJob(jobId)
+
+  if(loading) {
     return <div>Loading...</div>
   }
+  if(error) {
+    return <div class='has-text-danger'>There was an error fetching the job</div>
+  }
+
+  // const [job, setJob] = useState(null);
+  // useEffect(() => {
+  //   const fetchJob = async () => {
+  //     const job = await getJobById(jobId);
+  //     setJob(job);
+  //   };
+  //   fetchJob();
+  // }, [jobId])
+  // console.log("[JobPage] job: ", job, " jobId: ", jobId)
+  // if(!job) {
+  //   return <div>Loading...</div>
+  // }
+  
   // const job = jobs.find((job) => job.id === jobId);
+  
   return (
     <div>
       <h1 className="title is-2">

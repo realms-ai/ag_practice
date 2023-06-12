@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { createJob } from '../lib/graphql/queries';
+import { createJob, createJobQuery, getJobByIdQuery } from '../lib/graphql/queries';
 import { useNavigate } from 'react-router';
+import { useMutation } from '@apollo/client';
+import { useCreateJob } from '../lib/graphql/hooks';
 
 
 function CreateJobPage() {
@@ -8,9 +10,40 @@ function CreateJobPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  // Use of Result
+  // 1. To show loading state and disable submit button to avoid multiple clicks
+  // const [mutate, result] = useMutation(createJobQuery) 
+  //, { 
+  //   variables: { input: { title, description } },
+  //   onCompleted: (data) => {
+  //     console.log("[CreateJobPage] data: ", data)
+  //     navigate(`/jobs/${data.job.id}`);
+  //   }
+  // })
+
+  // Using Hook
+  const {createJob, result} = useCreateJob()
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const job = await createJob({ title, description })
+    // const job = await createJob({ title, description })
+    
+    // const {data: {job}} = await mutate({
+    //   variables: {
+    //     jobInput: {title, description}
+    //   },
+    //   update: (cache, {data}) => {
+    //     console.log('[Queries.createJob] cache: ', cache, ' data: ', data)
+    //     cache.writeQuery({
+    //       query: getJobByIdQuery,
+    //       variables: {id: data.job.id},
+    //       data: {job: data.job}
+    //     })
+    //   }
+    // })
+
+    const job = await createJob(title, description)
+
     console.log('Job created: ', job)
     navigate(`/jobs/${job.id}`);
   };
@@ -44,7 +77,7 @@ function CreateJobPage() {
           </div>
           <div className="field">
             <div className="control">
-              <button className="button is-link" onClick={handleSubmit}>
+              <button className="button is-link" disabled={result.loading} onClick={handleSubmit}>
                 Submit
               </button>
             </div>

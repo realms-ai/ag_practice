@@ -3,8 +3,19 @@ import { generateId } from './ids.js';
 
 const getJobTable = () => connection.table('job');
 
-export async function getJobs() {
-  return await getJobTable().select();
+export async function getJobs(limit = 10, offset = 0) {
+  const query = getJobTable().select().orderBy("createdAt", "desc")
+  const total = await getJobTable().count() || 0;
+  console.log("Offset: ", offset)
+  const response = await query.limit(limit).offset(offset);
+  // console.log("Response: ", response)
+  // console.log("Total: ", Object.values(total[0])[0])  
+  return { details: response, totalCount: Object.values(total[0])[0] };
+  // return response;
+}
+
+export async function getTotalJobs() {
+  return await getJobTable().count() || 0;
 }
 
 export async function getJob(id) {

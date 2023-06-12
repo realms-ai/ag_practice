@@ -1,14 +1,18 @@
 import { GraphQLError } from 'graphql'
 import { getCompany } from './db/companies.js'
-import { getJobs as fetchJobs, getJob, getJobByCompanyId, createJob as addJob, deleteJob, updateJob } from './db/jobs.js'
+import { getJobs as fetchJobs, getJob, getJobByCompanyId, createJob as addJob, deleteJob, updateJob, getTotalJobs } from './db/jobs.js'
 
 const getGreeting = () => {
     return 'Hello GraphQL World!'
 }
 
-const getJobs = async () => {
+const getJobs = async (limit, offset) => {
     // Optimized Code
-    return await fetchJobs()
+    console.log("Limit: ", limit, ", Offset: ", offset)
+    // const {jobs, totalJobs} = await fetchJobs(limit, offset)
+    // console.log("Jobs: ", jobs)
+    // return jobs
+    return await fetchJobs(limit, offset)
 
     // const jobs = await fetchJobs()
     // console.log("Jobs: ", jobs)
@@ -77,7 +81,13 @@ const unauthorizeAccess = () => {
 export const resolvers = {
     Query: {
         greeting: getGreeting,
-        jobs: getJobs,
+        jobs: (_root, _args) => getJobs(
+            // _root: parent object
+            // _args: arguments passed to the query
+            // _context: context passed to the query
+            // _info: information about the execution state of the query
+            _args.limit, _args.offset
+        ),
         job: (_root, args) => {
             console.log("[Query.jobs] args: ", args)
             return getJobById(args.id)
@@ -111,7 +121,9 @@ export const resolvers = {
     },
     Job: {
         date: (job) => toISODate(job.createdAt),
-        company: (job) => getCompany(job.companyId)
+        // company: (job) => getCompany(job.companyId)
+        // company: (job) => companyLoader.load(job.companyId) // Use DateLoader to avoid N+1 query problem
+        company: (job, _args, {companyLoader}) => companyLoader.load(job.companyId) // Use DateLoader to avoid N+1 query problem and use this context to pass the loader to avoid caching problem
     },
     Company: {
         jobs: (company) => getJobByCompanyId(company.id)

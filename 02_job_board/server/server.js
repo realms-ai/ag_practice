@@ -6,6 +6,7 @@ import { readFile } from 'node:fs/promises';
 import { authMiddleware, handleLogin } from './auth.js';
 import { resolvers } from './resolver.js';
 import { getUser } from './db/users.js';
+import { createCompanyLoader } from './db/companies.js';
 
 const PORT = 9000;
 
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.post('/login', handleLogin);
 
 const getContext = async({req}) => {
+  const companyLoader = createCompanyLoader();
   console.log("[getContext] req.body: ", req.body)
   console.log("[getContext] req.headers: ", req.headers)
   console.log("[getContext] req.auth: ", req.auth)
@@ -26,7 +28,7 @@ const getContext = async({req}) => {
   if(req.auth) {
     user = await getUser(req.auth.sub);
   }
-  return { auth: req.auth, user: user, weather: 'sunny' };
+  return { auth: req.auth, user: user, weather: 'sunny', companyLoader };
 }
 
 const typeDefs = await readFile('./schema.graphql', 'utf-8')

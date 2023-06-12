@@ -99,19 +99,47 @@ const getJobByIdQuery = gql`
 			...JobDetails
 		}
 	}
-	
+`
+
+const getJobsQuery = gql`
+	${basicJobFragments}
+	${basicCompanyFragments}
+	query GetJobs($limit: Int, $offset: Int) {
+		jobs(limit: $limit, offset: $offset) {
+			details {
+				company {
+				...CompanyBasics
+				},
+				...JobBasics
+			},
+			totalCount    
+		},
+	}
+`
+const getCompanyByIdQuery = gql`
+	${basicJobFragments}
+	${basicCompanyFragments}
+	${detailCompanyFragments}
+	query GetCompanyBYId($companyId: ID!) {
+		company(id: $companyId) {
+			jobs {
+				...JobBasics
+			}
+			...CompanyDetails
+		} 
+	}
 `
 
 const getJobs = async() => {
     const query = gql`
         ${basicJobFragments}
-				${basicCompanyFragments}
-				query GetJobs {
+		${basicCompanyFragments}
+		query GetJobs {
             jobs {
                company {
-								...CompanyBasics
-							 },
-							 ...JobBasics
+					...CompanyBasics
+				},
+				...JobBasics
             }
         }
 				
@@ -167,9 +195,26 @@ const getCompanyById = async(id) => {
 		return company
 }
 
+const createJobQuery = gql`
+	${basicJobFragments}
+	${basicCompanyFragments}
+	${detailJobFragments}
+	mutation AddJob($jobInput: CreateJobInput!) {
+		job: createJob (input: $jobInput) {
+			company {
+			...CompanyBasics
+		}
+		...JobDetails
+		}
+	}
+`
+
 const createJob = async(input) => {
 	const mutationQuery	= gql`
 		mutation AddJob($jobInput: CreateJobInput!) {
+			${basicJobFragments}
+			${basicCompanyFragments}
+			${detailJobFragments}
 			job: createJob (input: $jobInput) {
 				company {
 				...CompanyBasics
@@ -204,4 +249,4 @@ const createJob = async(input) => {
 	return job
 }
 
-export { getJobs, getJobById, getCompanyById, createJob, apolloClient }
+export { getJobs, getJobById, getCompanyById, createJob, apolloClient, getCompanyByIdQuery, getJobByIdQuery, getJobsQuery, createJobQuery }

@@ -1,8 +1,9 @@
 type Query {
     greeting: String,
-    jobs: [Job!]
-    job(id: ID!): Job
-    company(id: ID!): Company
+    jobs(limit: Int, offset: Int): JobResponseWithCount,
+    """ GET: Job by ID """
+    job(id: ID!): Job,
+    company(id: ID!): Company,
 }
 
 """ POST: Job input """
@@ -26,9 +27,6 @@ type Mutation {
     updateJobById(id: ID!, input: UpdateJobInput): Job
 }
 
-
-
-
 type Company {
     id: ID!
     name: String!
@@ -48,4 +46,9 @@ type Job {
     description: String
     company: Company!
     location: String
+}
+
+type JobResponseWithCount {
+    details: [Job!],
+    totalCount: Int!
 }
