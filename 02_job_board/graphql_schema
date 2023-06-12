@@ -1,0 +1,70 @@
+fragment JobBasics on Job {
+  id
+  date
+  title
+}
+
+fragment JobDetails on Job {
+  description
+  ...JobBasics		
+}
+
+fragment CompanyBasics on Company {
+  id
+  name
+}
+
+fragment CompanyDetails on Company {		
+  description
+  ...CompanyBasics
+}
+
+query GetJobs($jobsLimit: Int, $jobsOffset: Int) {
+  jobs(limit: $jobsLimit, offset: $jobsOffset) {
+    details{
+      company {
+        ...CompanyBasics
+      },
+      ...JobBasics
+    },
+    totalCount    
+  },
+}
+
+query GetJobs($jobsLimit: Int, $jobsOffset: Int) {
+  jobs(limit: $jobsLimit, offset: $jobsOffset) {
+    id
+    title
+    date
+    company {
+      id
+      name
+    }
+  },
+  totalJobs
+}
+
+query GetJobById($id: ID!) {
+  job(id: $id) {
+    company {
+      ...CompanyBasics
+    }
+    ...JobDetails
+  }
+}
+
+mutation AddJob($jobInput: CreateJobInput!) {
+  job: createJob (input: $jobInput) {
+    company {
+    ...CompanyBasics
+  }
+  ...JobDetails
+  }
+}
+
+// VARIABLES
+
+{
+  "jobsLimit": 10,
+  "jobsOffset": 0
+}

@@ -1,3 +1,5 @@
+// PaginationBar Bulma
+
 function Pagination({count, page, limit, onPageChange}) {
 
     const numberOfPages = Math.ceil(count / limit)
