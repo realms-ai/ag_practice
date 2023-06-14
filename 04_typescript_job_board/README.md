@@ -6,7 +6,9 @@ It uses Apollo Server with Express, and GraphQL-Request and Apollo Client as Gra
 
 ## Packages to Install
 [Apollo Docs](https://www.apollographql.com/docs/)
+
 [Link](https://www.apollographql.com/docs/apollo-server/workflow/generate-types/)
+
 1. [Plugins](https://the-guild.dev/graphql/codegen/plugins)
    - Typescript
      - Check **TypeName** in there to remove typename from schema generated
