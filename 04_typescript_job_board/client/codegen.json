@@ -1,0 +1,18 @@
+{
+  "overwrite": true,
+  "schema": "http://192.168.0.19:9000/graphql",
+  "documents": "./src/lib/graphql/queries.ts",
+  "generates": {
+    "src/generated/": {
+      "preset": "client",
+      "plugins": [],
+      "config": {
+        "skipTypename": true        
+      },
+      "presetConfig": {
+        "fragmentMasking": false
+      }
+
+    }
+  }
+}
